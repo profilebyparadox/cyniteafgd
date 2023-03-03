@@ -199,7 +199,7 @@ async def next_page(bot, query):
     btn.insert(1, 
          [
              InlineKeyboardButton(f'ᴍᴏᴠɪᴇ', 'minfo'),
-             InlineKeyboardButton('How To Watch', url='https://t.me/cyniteofficial'),
+             InlineKeyboardButton('How To Watch', url='https://t.me/b4backupchnanel'),
              InlineKeyboardButton(f'sᴇʀɪᴇs', 'sinfo')
          ]
     )
@@ -704,7 +704,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "source":
         buttons = [[
-            InlineKeyboardButton('Contact', url='https://t.me/cyniteofficial'),
+            InlineKeyboardButton('Contact', url='https://t.me/b4backupchnanel'),
             InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='about')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
@@ -962,7 +962,7 @@ async def auto_filter(client, msg, spoll=False):
     btn.insert(1, 
          [
              InlineKeyboardButton(f'ᴍᴏᴠɪᴇ', 'minfo'),
-             InlineKeyboardButton('How To Watch', url='https://t.me/cyniteofficial'), 
+             InlineKeyboardButton('How To Watch', url='https://t.me/b4backupchnanel'), 
              InlineKeyboardButton(f'sᴇʀɪᴇs', 'sinfo')
          ]
     )
