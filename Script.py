@@ -139,9 +139,6 @@ Elsa
 
     CUSTOM_FILE_CAPTION = """FILE : <code>{file_name}</code> 
 Size : <i>{file_size}</i>"""
-    """╔════ ᴊᴏɪɴ ᴡɪᴛʜ ᴜs ════╗
-▫️<a href=https://t.me/born4movies> ᴄʜᴀɴɴᴇʟ </a>
-╚════ ᴊᴏɪɴ ᴡɪᴛʜ ᴜs ════╝</b>"""
 
     RESTART_TXT = """
 <b>Bᴏᴛ Rᴇsᴛᴀʀᴛᴇᴅ !
