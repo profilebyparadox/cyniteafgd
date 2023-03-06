@@ -9,7 +9,7 @@ async def _verify(bot, message):
         group = await get_group(message.chat.id)
         user_id = group["user_id"]
         user_name = group["user_name"]
-        verified = group[cynitedb.py"verified"]
+        verified = group["verified"]
     except:
         return await bot.leave_chat(message.chat.id)
 
