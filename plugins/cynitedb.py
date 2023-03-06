@@ -6,7 +6,7 @@ from pyrogram.errors import UserNotParticipant
 from motor.motor_asyncio import AsyncIOMotorClient
 from pyrogram.types import ChatPermissions, InlineKeyboardMarkup, InlineKeyboardButton
 
-dbclient = AsyncIOMotorClient(DATABASE_URI)
+dbclient = AsyncIOMotorClient(MONGO_URL)
 db       = dbclient["File-Searcher"]
 grp_col  = db["GROUPS"]
 
