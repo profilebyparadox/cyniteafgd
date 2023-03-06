@@ -5,11 +5,15 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 @Client.on_message(filters.group & filters.command("verify"))
 async def _verify(bot, message):
+    try:@Client.on_message(filters.group & filters.command("verify"))
+async def _verify(bot, message):
     try:
         group = await get_group(message.chat.id)
         user_id = group["user_id"]
         user_name = group["user_name"]
         verified = group["verified"]
+    except Exception as e:
+        return await message.reply(f"An error occurred: {e}")
 
     if message.from_user.id != user_id:
         return await message.reply(f"Only {user.mention} can use this command 😁")
