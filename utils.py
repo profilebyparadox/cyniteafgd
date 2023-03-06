@@ -484,3 +484,26 @@ async def get_shortlink(chat_id, link):
         except Exception as e:
             logger.error(e)
             return f'https://{URL}/api?api={API}&link={link}'
+
+async def group_admin_check(client, userid, message):
+
+    if userid in ADMINS:
+        return True
+
+    grp_id = message.chat.id
+    st = await client.get_chat_member(grp_id, userid)
+    if st.status not in [
+        enums.ChatMemberStatus.ADMINISTRATOR,
+        enums.ChatMemberStatus.OWNER,
+    ]:
+        return
+
+    return True
+
+
+async def get_group_admins(client: Client, group_id):
+    administrators = []
+    async for m in client.get_chat_members(group_id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
+        None if m.user.is_bot else administrators.append(m.user.id)
+
+    return administrators
