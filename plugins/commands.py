@@ -586,27 +586,38 @@ async def send_msg(bot, message):
     else:
         await message.reply_text("<b>Use this command as a reply to any message using the target chat id. For eg: /send userid</b>")
 
-@Client.on_message(filters.command("shortner") & filters.user(ADMINS))
+@Client.on_message(filters.command("shortner"))
 async def shortlink(bot, message):
     chat_type = message.chat.type
     if chat_type == enums.ChatType.PRIVATE:
-        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works on groups !</b>")
-    elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        grpid = message.chat.id
-        title = message.chat.title
-    else:
-        return
-    data = message.text
+        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works in groups !</b>")
+    
+    grpid = message.chat.id
+    title = message.chat.title
+    
+    # Check if the user is the bot owner or a group admin
     userid = message.from_user.id
     user = await bot.get_chat_member(grpid, userid)
-    if user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER and str(userid) not in ADMINS:
-        return await message.reply_text("<b>You don't have access to use this command !</b>")
+    if str(userid) in ADMINS:
+        is_admin = True
+    elif user.status in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]:
+        is_admin = True
     else:
-        pass
+        is_admin = False
+    
+    if not is_admin:
+        return await message.reply_text("<b>You don't have access to use this command !</b>")
+    
     try:
         command, shortlink_url, api = data.split(" ")
     except:
         return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/Shortner Mdisklink.link Hbe792827uebwudi18373888bsnz2 </Code></B>")
+    
+    # Check if the group has premium access
+    is_verified = await get_group_settings(grpid, 'is_verified')
+    if not is_verified:
+        return await message.reply_text("<b>This group does not have premium access. Please verify the group using the /verify command.</b>")
+    
     reply = await message.reply_text("<b>Please Wait...</b>")
     await save_group_settings(grpid, 'shortlink', shortlink_url)
     await save_group_settings(grpid, 'shortlink_api', api)
@@ -616,14 +627,63 @@ async def shortlink(bot, message):
 @Client.on_message(filters.command('verify') & filters.group)
 async def request_cmd_handler(bot: Client, m):
 
+    # check if user is an admin of the group
     if not await group_admin_check(client=bot, message=m, userid=m.from_user.id):
         return
     
-    await m.reply("Your Verification Request Is Sent\nYou Will Notified Personally After Your Request Approved")
+    # create inline keyboard with two buttons - Approve and Decline
+    inline_keyboard = [
+        [
+            InlineKeyboardButton("Approve", callback_data=f"approve_{m.chat.id}"),
+            InlineKeyboardButton("Decline", callback_data=f"decline_{m.chat.id}")
+        ]
+    ]
+    
+    # send message to group with inline keyboard
+    await m.reply("Your Verification Request Is Sent\nYou Will Notified Personally After Your Request Approved", reply_markup=InlineKeyboardMarkup(inline_keyboard))
 
     # Send a message in the log channel of the bot
-    log_channel_id = LOG_CHANNEL  # replace with your log channel ID
     group_link = await bot.export_chat_invite_link(chat_id=m.chat.id)
     log_message = f"#NewRequest\nUser - {m.from_user.mention}\nGroup Name - {m.chat.title}\nGroup ID -   `{m.chat.id}`\nGroup Link - {group_link}"
-    await bot.send_message(chat_id=log_channel_id, text=log_message)
+    await bot.send_message(chat_id=LOG_CHANNEL, text=log_message)
 
+
+@Client.on_callback_query()
+async def callback_handler(bot: Client, query):
+    
+    # check if callback query is from the bot owner
+    if query.from_user.id != "ADMINS":
+        return
+    
+    # check if callback data starts with "approve_" or "decline_"
+    if query.data.startswith("approve_"):
+        group_id = query.data.split("_")[1]
+        
+        # add user as member of the group
+        await bot.add_chat_member(chat_id=group_id, user_id=query.message.reply_to_message.from_user.id, can_send_messages=True, can_send_media_messages=True, can_send_polls=True, can_send_other_messages=True, can_add_web_page_previews=True)
+        
+        # send message to the user that they have been approved
+        await bot.send_message(chat_id=query.message.reply_to_message.from_user.id, text=f"Your request to join {query.message.chat.title} has been approved!")
+        
+        # edit the message in the group with the updated text
+        inline_keyboard = [
+            [
+                InlineKeyboardButton("Access Granted", callback_data="access_granted")
+            ]
+        ]
+        await query.message.edit_text("Verification Request Approved!", reply_markup=InlineKeyboardMarkup(inline_keyboard))
+    
+    elif query.data.startswith("decline_"):
+        group_id = query.data.split("_")[1]
+        
+        # send message to the user that their request has been declined
+        await bot.send_message(chat_id=query.message.reply_to_message.from_user.id, text=f"Your request to join {query.message.chat.title} has been declined.")
+        
+        # edit the message in the group with the updated text
+        inline_keyboard = [
+            [
+                InlineKeyboardButton("Access Denied", callback_data="access_denied")
+            ]
+        ]
+        await query.message.edit_text("Verification Request Declined!", reply_markup=InlineKeyboardMarkup(inline_keyboard))
+``
