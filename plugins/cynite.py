@@ -3,13 +3,15 @@ from plugins.cynitedb import *
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-Client.on_message(filters.group & filters.command("verify"))
+@Client.on_message(filters.group & filters.command("verify"))
 async def _verify(bot, message):
     try:
         group = await get_group(message.chat.id)
         user_id = group["user_id"]
         user_name = group["user_name"]
         verified = group["verified"]
+    except:
+        return await bot.leave_chat(message.chat.id)
     try:
         user = await bot.get_users(user_id)
     except:
