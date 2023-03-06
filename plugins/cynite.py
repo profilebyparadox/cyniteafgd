@@ -11,7 +11,7 @@ async def _verify(bot, message):
         user_name = group["user_name"]
         verified = group["verified"]
     except:
-        return await message.reply(f"/verify AGain)
+        return await message.reply(f"Please /verify again")
 
     try:
         user = await bot.get_users(user_id)
