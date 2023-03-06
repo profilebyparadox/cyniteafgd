@@ -609,7 +609,7 @@ async def shortlink(bot, message):
         return await message.reply_text("<b>You don't have access to use this command !</b>")
     
     try:
-        command, shortlink_url, api = data.split(" ")
+        command, shortlink_url, api = message.text.split(" ")
     except:
         return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/Shortner Mdisklink.link Hbe792827uebwudi18373888bsnz2 </Code></B>")
     
@@ -652,37 +652,37 @@ async def request_cmd_handler(bot: Client, m):
 async def callback_handler(bot: Client, query):
     
     # check if callback query is from the bot owner
-    if query.from_user.id != "ADMINS":
+    if str(query.from_user.id) not in ADMINS:
         return
     
-    # check if callback data starts with "approve_" or "decline_"
-    if query.data.startswith("approve_"):
-        group_id = query.data.split("_")[1]
-        
-        # add user as member of the group
-        await bot.add_chat_member(chat_id=group_id, user_id=query.message.reply_to_message.from_user.id, can_send_messages=True, can_send_media_messages=True, can_send_polls=True, can_send_other_messages=True, can_add_web_page_previews=True)
-        
-        # send message to the user that they have been approved
-        await bot.send_message(chat_id=query.message.reply_to_message.from_user.id, text=f"Your request to join {query.message.chat.title} has been approved!")
-        
-        # edit the message in the group with the updated text
-        inline_keyboard = [
-            [
-                InlineKeyboardButton("Access Granted", callback_data="access_granted")
-            ]
-        ]
-        await query.message.edit_text("Verification Request Approved!", reply_markup=InlineKeyboardMarkup(inline_keyboard))
+    # get the callback data
+    data = query.data.split("_")
+    action = data[0]
+    grpid = int(data[1])
     
-    elif query.data.startswith("decline_"):
-        group_id = query.data.split("_")[1]
+    # check if the action is to approve the group
+    if action == "approve":
+        # grant access to the group
+        await save_group_settings(grpid, 'is_verified', True)
+        await bot.answer_callback_query(callback_query_id=query.id, text="Group has been verified and now has premium access!")
         
-        # send message to the user that their request has been declined
-        await bot.send_message(chat_id=query.message.reply_to_message.from_user.id, text=f"Your request to join {query.message.chat.title} has been declined.")
+        # notify the group that their verification request has been approved
+        group_link = await bot.export_chat_invite_link(chat_id=grpid)
+        await bot.send_message(chat_id=grpid, text=f"🎉 Congratulations! Your verification request has been approved and your group now has premium access 🎉\n\nJoin the support group for more info - {SUPPORT_GROUP}")
         
-        # edit the message in the group with the updated text
-        inline_keyboard = [
-            [
-                InlineKeyboardButton("Access Denied", callback_data="access_denied")
-            ]
-        ]
-        await query.message.edit_text("Verification Request Declined!", reply_markup=InlineKeyboardMarkup(inline_keyboard))
+        # send a message in the log channel of the bot
+        log_message = f"#Verified\nGroup Name - {query.message.chat.title}\nGroup ID - `{query.message.chat.id}`\nGroup Link - {group_link}"
+        await bot.send_message(chat_id=LOG_CHANNEL, text=log_message)
+        
+    # check if the action is to decline the group
+    elif action == "decline":
+        await bot.answer_callback_query(callback_query_id=query.id, text="Group verification request has been declined!")
+        
+        # notify the group that their verification request has been declined
+        await bot.send_message(chat_id=grpid, text=f"❌ We're sorry to inform you that your group's verification request has been declined.\n\nJoin the support group for more info - {SUPPORT_GROUP}")
+        
+        # send a message in the log channel of the bot
+        log_message = f"#Declined\nGroup Name - {query.message.chat.title}\nGroup ID - `{query.message.chat.id}`"
+        await bot.send_message(chat_id=LOG_CHANNEL, text=log_message)
+
+    
