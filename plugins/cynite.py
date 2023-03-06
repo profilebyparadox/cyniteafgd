@@ -5,8 +5,6 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 @Client.on_message(filters.group & filters.command("verify"))
 async def _verify(bot, message):
-    try:@Client.on_message(filters.group & filters.command("verify"))
-async def _verify(bot, message):
     try:
         group = await get_group(message.chat.id)
         user_id = group["user_id"]
