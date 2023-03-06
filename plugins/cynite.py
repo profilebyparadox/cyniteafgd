@@ -11,10 +11,10 @@ async def _verify(bot, message):
         user_name = group["user_name"]
         verified = group["verified"]
     except:
-        return await message.reply(f"Please /verify again")
+        return await bot.leave_chat(message.chat.id)
 
     try:
-        user = await bot.get_users(user_id)
+        user = await bot.get_users(user_id) 
     except:
         return await message.reply(f"❌ {user_name} Need to start me in PM!")
 
