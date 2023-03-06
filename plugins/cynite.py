@@ -12,7 +12,6 @@ async def _verify(bot, message):
         verified = group["verified"]
     except:
         return await bot.leave_chat(message.chat.id)
-
     try:
         user = await bot.get_users(user_id)
     except:
