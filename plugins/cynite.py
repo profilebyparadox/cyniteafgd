@@ -3,7 +3,7 @@ from plugins.cynitedb import *
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-@Client.on_message(filters.group & filters.command("verify"))
+Client.on_message(filters.group & filters.command("verify"))
 async def _verify(bot, message):
     try:
         group = await get_group(message.chat.id)
@@ -14,9 +14,12 @@ async def _verify(bot, message):
         return await bot.leave_chat(message.chat.id)
 
     try:
-        user = await bot.get_users(user_id) 
+        user = await bot.get_users(user_id)
     except:
         return await message.reply(f"❌ {user_name} Need to start me in PM!")
+
+    if message.from_user.id != user_id:
+        return await message.reply(f"Only {user.mention} can use this command 😁")
 
     if verified:
         return await message.reply("This group is already verified!")
