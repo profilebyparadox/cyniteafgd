@@ -8,7 +8,7 @@ from pyrogram.errors import ChatAdminRequired, FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from database.ia_filterdb import Media, get_file_details, unpack_new_file_id
 from database.users_chats_db import db
-from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, MSG_ALRT, MAIN_CHANNEL, CYNITE
+from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, MSG_ALRT, MAIN_CHANNEL, CYNITE, LOG_CHANNEL
 from utils import get_settings, get_size, is_subscribed, save_group_settings, temp
 from database.connections_mdb import active_connection
 import re
@@ -612,3 +612,22 @@ async def shortlink(bot, message):
     await save_group_settings(grpid, 'shortlink_api', api)
     await save_group_settings(grpid, 'is_shortlink', True)
     await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+
+@Client.on_message(filters.command('verify') & filters.group)
+async def request_cmd_handler(bot: Client, m):
+
+    if not await group_admin_check(client=bot, message=m, userid=m.from_user.id):
+        return
+    
+    if PAID: 
+        owner = (await bot.get_users(OWNER_ID)).mention 
+        await m.reply(f"Your Verification Request Is Sent\nYou Will Notified Personally After Your Request Approved")
+
+    else:
+        await m.reply("This bot is free for all")
+
+    # Send a message in the log channel of the bot
+    log_channel_id = LOG_CHANNEL  # replace with your log channel ID
+    group_link = await bot.export_chat_invite_link(chat_id=m.chat.id)
+    log_message = f"#NewRequest\nUser - {m.from_user.mention}\nGroup Name - {m.chat.title}\nGroup ID -   `{m.chat.id}`\nGroup Link - {group_link}"
+    await bot.send_message(chat_id=log_channel_id, text=log_message)
