@@ -1,5 +1,5 @@
-from info import LOG_CHANNEL
-from utils import *
+from info import *
+from plugins.cynitedb import *
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -9,7 +9,7 @@ async def _verify(bot, message):
         group = await get_group(message.chat.id)
         user_id = group["user_id"]
         user_name = group["user_name"]
-        verified = group["verified"]
+        verified = group[cynitedb.py"verified"]
     except:
         return await bot.leave_chat(message.chat.id)
 
