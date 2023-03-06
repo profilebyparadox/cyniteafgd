@@ -10,9 +10,6 @@ async def _verify(bot, message):
         user_id = group["user_id"]
         user_name = group["user_name"]
         verified = group["verified"]
-    
-    except:
-        return await message.reply(f"❌ {user_name} Need to start me in PM!")
 
     if message.from_user.id != user_id:
         return await message.reply(f"Only {user.mention} can use this command 😁")
