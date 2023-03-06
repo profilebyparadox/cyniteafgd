@@ -686,4 +686,3 @@ async def callback_handler(bot: Client, query):
             ]
         ]
         await query.message.edit_text("Verification Request Declined!", reply_markup=InlineKeyboardMarkup(inline_keyboard))
-``
