@@ -7,8 +7,6 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 async def _verify(bot, message):
     try:
         group = await get_group(message.chat.id)
-        if group is None:
-            return await message.reply("Group not found in database.")
         user_id = group["user_id"]
         user_name = group["user_name"]
         verified = group["verified"]
