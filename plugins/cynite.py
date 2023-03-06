@@ -1,6 +1,6 @@
 from info import *
 from plugins.cynitedb import *
-from pyrogram import Client, filters
+from pyrogram import Client, filters, errors
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 @Client.on_message(filters.group & filters.command("verify"))
@@ -12,6 +12,7 @@ async def _verify(bot, message):
         verified = group["verified"]
     except:
         return await bot.leave_chat(message.chat.id)
+
     try:
         user = await bot.get_users(user_id)
     except:
@@ -41,10 +42,13 @@ async def _verify(bot, message):
                  InlineKeyboardButton("❌ Decline", callback_data=f"verify_decline_{message.chat.id}")],
                 [InlineKeyboardButton("👀 View Group", url=f"{link}")]]
 
-    await bot.send_message(chat_id=LOG_CHANNEL,
-                           text=text,
-                           disable_web_page_preview=True,
-                           reply_markup=InlineKeyboardMarkup(keyboard))
+    try:
+        await bot.send_message(chat_id=LOG_CHANNEL,
+                               text=text,
+                               disable_web_page_preview=True,
+                               reply_markup=InlineKeyboardMarkup(keyboard))
+    except errors.PeerIdInvalid:
+        pass
 
     await message.reply("Verification request sent ✅\nWe will notify you personally when it is approved.")
 
