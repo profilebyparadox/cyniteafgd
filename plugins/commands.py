@@ -579,27 +579,27 @@ async def send_msg(bot, message):
 
 @Client.on_message(filters.command("shortner"))
 async def shortlink(bot, message):
-chat_type = message.chat.type
-if chat_type == enums.ChatType.PRIVATE:
-return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works in groups !</b>")
-elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-grpid = message.chat.id
-title = message.chat.title
-else:
-return
-data = message.text
-userid = message.from_user.id
-user = await bot.get_chat_member(grpid, userid)
-if str(userid) not in ADMINS:
-return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
-elif user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER:
-return await message.reply_text("<b>Sorry, this command is only available for bot owners !</b>")
-try:
-command, shortlink_url, api = data.split(" ")
-except:
-return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
-reply = await message.reply_text("<b>Please wait...</b>")
-await save_group_settings(grpid, 'shortlink', shortlink_url)
-await save_group_settings(grpid, 'shortlink_api', api)
-await save_group_settings(grpid, 'is_shortlink', True)
-await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+    chat_type = message.chat.type
+    if chat_type == enums.ChatType.PRIVATE:
+        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works in groups !</b>")
+    elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+        grpid = message.chat.id
+        title = message.chat.title
+    else:
+        return
+    data = message.text
+    userid = message.from_user.id
+    user = await bot.get_chat_member(grpid, userid)
+    if str(userid) not in ADMINS:
+        return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
+    elif user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER:
+        return await message.reply_text("<b>Sorry, this command is only available for bot owners !</b>")
+    try:
+        command, shortlink_url, api = data.split(" ")
+    except:
+        return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
+    reply = await message.reply_text("<b>Please wait...</b>")
+    await save_group_settings(grpid, 'shortlink', shortlink_url)
+    await save_group_settings(grpid, 'shortlink_api', api)
+    await save_group_settings(grpid, 'is_shortlink', True)
+    await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
