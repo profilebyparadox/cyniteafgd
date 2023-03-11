@@ -576,7 +576,12 @@ async def send_msg(bot, message):
     else:
         await message.reply_text("<b>Use this command as a reply to any message using the target chat id. For eg: /send userid</b>")
 
-@Client.on_message(filters.command("shortner") & filters.user(ADMINS))
+
+Add Admin-Only Restriction.
+
+
+Rng Harman
+@Client.on_message(filters.command("shortner")
 async def shortlink(bot, message):
     chat_type = message.chat.type
     if chat_type == enums.ChatType.PRIVATE:
@@ -602,3 +607,208 @@ async def shortlink(bot, message):
     await save_group_settings(grpid, 'shortlink_api', api)
     await save_group_settings(grpid, 'is_shortlink', True)
     await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+
+Update code that only bot owner can use this command if any else use bot send you dont have acess to use this command
+
+@Client.on_message(filters.command("shortner")
+async def shortlink(bot, message):
+chat_type = message.chat.type
+if chat_type == enums.ChatType.PRIVATE:
+return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works on groups !</b>")
+elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+grpid = message.chat.id
+title = message.chat.title
+else:
+return
+data = message.text
+userid = message.from_user.id
+user = await bot.get_chat_member(grpid, userid)
+if user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER and str(userid) not in ADMINS:
+return await message.reply_text("<b>Sorry, you don't have access to use this command !</b>")
+else:
+pass
+if str(userid) not in ADMINS:
+return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
+try:
+command, shortlink_url, api = data.split(" ")
+except:
+return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
+reply = await message.reply_text("<b>Please Wait...</b>")
+await save_group_settings(grpid, 'shortlink', shortlink_url)
+await save_group_settings(grpid, 'shortlink_api', api)
+await save_group_settings(grpid, 'is_shortlink', True)
+await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+
+I have updated the code to check if the user trying to use the command is an admin of the group or the bot owner. If the user is not an admin and not the bot owner, they will receive a message saying that they don't have access to use the command.
+
+
+
+
+Rng Harman
+How i cooy this messagr it copying whole web in mobile
+
+If you're trying to copy a message on a mobile device and it's copying the whole webpage instead of just the message, there are a few things you can try:
+
+Long-press the message you want to copy: On many mobile devices, if you long-press (tap and hold) on a message, a menu will appear that allows you to copy the text of the message. Try doing this and see if it works.
+
+Use the "quote message" feature: Many messaging apps have a feature that allows you to quote a message in your reply. This can be useful if you want to copy a message and also add your own comment or reply to it. To use this feature, long-press on the message you want to quote and then look for an option that says "quote" or "reply". When you select this option, the message will be copied into your reply along with a reference to the original message.
+
+Use a different device or browser: If you're still having trouble copying the message on your mobile device, you could try using a different device or browser to access the messaging app. Sometimes different devices or browsers behave differently and one might be better suited to copying messages than another.
+
+I hope one of these solutions works for you!
+
+
+
+
+Rng Harman
+It copy whole messsge give me button to copy above code
+
+Unfortunately, as a text-based chatbot, I don't have the ability to create buttons for you to click on. However, I can suggest a few ways to copy the code without copying the entire message:
+
+Expand the message and select the code: Many messaging apps allow you to expand a message by tapping on it, which can make it easier to select specific parts of the message. Try expanding the message and then selecting the code manually by dragging your finger over it.
+
+Use a code editor or IDE: If you're planning to use the code in a programming project, it might be helpful to copy the code into a code editor or integrated development environment (IDE) instead of directly into your project. This can help ensure that the formatting and syntax of the code are correct. You can then save the code as a separate file and import it into your project.
+
+Ask the sender to send the code separately: If the code is part of a longer message, you could ask the sender to send the code as a separate message. This would make it easier for you to select and copy the code without copying the rest of the message.
+
+I hope one of these solutions helps you copy the code you need!
+
+
+
+
+Rng Harman
+Create code copy button and write in a as code function
+
+I'm sorry, but as a text-based chatbot, I don't have the ability to create buttons or modify the messaging app interface. However, I can provide you with an example function that will display text as code and allow the user to copy it easily:
+
+python
+Copy code
+from typing import Union
+
+def send_as_code(chat_id: Union[int, str], text: str):
+    # Enclose the text in backticks to indicate that it is code
+    code_text = f'`{text}`'
+    # Send the text as a message with the 'parse_mode' parameter set to 'MarkdownV2'
+    # This will cause the backticks to be interpreted as indicating code formatting
+    bot.send_message(chat_id=chat_id, text=code_text, parse_mode='MarkdownV2')
+
+To use this function, simply pass in the chat ID and the text you want to display as code. The function will format the text as code and send it as a message to the specified chat. Users can then easily copy the code by selecting and copying the text from the message.
+
+
+
+
+Rng Harman
+@Client.on_message(filters.command("shortner")
+async def shortlink(bot, message):
+    chat_type = message.chat.type
+    if chat_type == enums.ChatType.PRIVATE:
+        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works on groups !</b>")
+    elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+        grpid = message.chat.id
+        title = message.chat.title
+    else:
+        return
+    data = message.text
+    userid = message.from_user.id
+    user = await bot.get_chat_member(grpid, userid)
+    if user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER and str(userid) not in ADMINS:
+        return await message.reply_text("<b>You don't have access to use this command !</b>")
+    else:
+        pass
+    try:
+        command, shortlink_url, api = data.split(" ")
+    except:
+        return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
+    reply = await message.reply_text("<b>Please Wait...</b>")
+    await save_group_settings(grpid, 'shortlink', shortlink_url)
+    await save_group_settings(grpid, 'shortlink_api', api)
+    await save_group_settings(grpid, 'is_shortlink', True)
+    await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+
+Update code that only bot owner can use this command if any else use bot send you dont have acess to use this command
+
+@Client.on_message(filters.command("shortner")
+async def shortlink(bot, message):
+chat_type = message.chat.type
+if chat_type == enums.ChatType.PRIVATE:
+return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works on groups !</b>")
+elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+grpid = message.chat.id
+title = message.chat.title
+else:
+return
+data = message.text
+userid = message.from_user.id
+user = await bot.get_chat_member(grpid, userid)
+if user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER and str(userid) not in ADMINS:
+return await message.reply_text("<b>Sorry, you don't have access to use this command !</b>")
+else:
+pass
+if str(userid) not in ADMINS:
+return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
+try:
+command, shortlink_url, api = data.split(" ")
+except:
+return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
+reply = await message.reply_text("<b>Please Wait...</b>")
+await save_group_settings(grpid, 'shortlink', shortlink_url)
+await save_group_settings(grpid, 'shortlink_api', api)
+await save_group_settings(grpid, 'is_shortlink', True)
+await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+
+Here's the updated code with the changes you requested:
+
+python
+Copy code
+@Client.on_message(filters.command("shortner"))
+async def shortlink(bot, message):
+    chat_type = message.chat.type
+    if chat_type == enums.ChatType.PRIVATE:
+        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works on groups !</b>")
+    elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+        grpid = message.chat.id
+        title = message.chat.title
+    else:
+        return
+    data = message.text
+    userid = message.from_user.id
+    user = await bot.get_chat_member(grpid, userid)
+    if user.status not in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER] and str(userid) not in ADMINS:
+        return await message.reply_text("<b>Sorry, you don't have access to use this command !</b>")
+    if str(userid) not in ADMINS:
+        return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
+    try:
+        command, shortlink_url, api = data.split(" ")
+    except:
+        return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
+    reply = await message.reply_text("<b>Please Wait...</b>")
+    await save_group_settings(grpid, 'shortlink', shortlink_url)
+    await save_group_settings(grpid, 'shortlink_api', api)
+    await save_group_settings(grpid, 'is_shortlink', True)
+    await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+This code now in@Client.on_message(filters.command("shortner"))
+async def shortlink(bot, message):
+chat_type = message.chat.type
+if chat_type == enums.ChatType.PRIVATE:
+return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works in groups !</b>")
+elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+grpid = message.chat.id
+title = message.chat.title
+else:
+return
+data = message.text
+userid = message.from_user.id
+user = await bot.get_chat_member(grpid, userid)
+if str(userid) not in ADMINS:
+return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
+elif user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER:
+return await message.reply_text("<b>Sorry, this command is only available for bot owners !</b>")
+try:
+command, shortlink_url, api = data.split(" ")
+except:
+return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
+reply = await message.reply_text("<b>Please wait...</b>")
+await save_group_settings(grpid, 'shortlink', shortlink_url)
+await save_group_settings(grpid, 'shortlink_api', api)
+await save_group_settings(grpid, 'is_shortlink', True)
+await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
