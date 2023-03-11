@@ -34,7 +34,7 @@ BUTTONS = {}
 SPELL_CHECK = {}
 FILTER_MODE = {}
 
-@Client.on_message((filters.group) & filters.text & filters.incoming)
+@Client.on_message(filters.text & filters.incoming)
 async def give_filter(client,message):
     await global_filters(client, message)
     group_id = message.chat.id
