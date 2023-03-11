@@ -20,8 +20,8 @@ async def addconnection(client, message):
             cmd, group_id = message.text.split(" ", 1)
         except:
             await message.reply_text(
-                "<b>Enter in correct format!</b>\n\n"
-                "<code>/connect groupid</code>\n\n"
+                "<b>Enter in correct format!</b>\n"
+                "<code>/connect groupid</code>\n"
                 "<i>Get your Group id by adding this bot to your group and use  <code>/id</code></i>",
                 quote=True
             )
@@ -42,7 +42,7 @@ async def addconnection(client, message):
     except Exception as e:
         logger.exception(e)
         await message.reply_text(
-            "Invalid Group ID!\n\nIf correct, Make sure I'm present in your group!!",
+            "Invalid Group ID!\nIf correct, Make sure I'm present in your group!!",
             quote=True,
         )
 
