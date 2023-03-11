@@ -592,8 +592,6 @@ async def shortlink(bot, message):
     user = await bot.get_chat_member(grpid, userid)
     if str(userid) not in ADMINS:
         return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
-    elif user.status != enums.ChatMemberStatus.ADMINISTRATOR and user.status != enums.ChatMemberStatus.OWNER:
-        return await message.reply_text("<b>Sorry, this command is only available for bot owners !</b>")
     try:
         command, shortlink_url, api = data.split(" ")
     except:
