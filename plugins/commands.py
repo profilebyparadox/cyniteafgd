@@ -580,7 +580,7 @@ async def send_msg(bot, message):
 def is_bot_owner(user_id):
     return str(user_id) in ADMINS
 
-@app.on_message(filters.command("shortner"))
+@Client.on_message(filters.command("shortner"))
 async def shortlink(bot, message):
     chat_type = message.chat.type
     if chat_type == enums.ChatType.PRIVATE:
