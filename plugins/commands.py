@@ -577,7 +577,10 @@ async def send_msg(bot, message):
         await message.reply_text("<b>Use this command as a reply to any message using the target chat id. For eg: /send userid</b>")
 
 
-@Client.on_message(filters.command("shortner"))
+def is_bot_owner(user_id):
+    return str(user_id) in ADMINS
+
+@app.on_message(filters.command("shortner"))
 async def shortlink(bot, message):
     chat_type = message.chat.type
     if chat_type == enums.ChatType.PRIVATE:
@@ -590,8 +593,8 @@ async def shortlink(bot, message):
     data = message.text
     userid = message.from_user.id
     user = await bot.get_chat_member(grpid, userid)
-    if str(userid) not in ADMINS:
-        return await message.reply_text("<b>Sorry, only the bot owner can use this command !</b>")
+    if not is_bot_owner(userid):
+        return await message.reply_text("<b>Sorry, only the bot admins can use this command !</b>")
     try:
         command, shortlink_url, api = data.split(" ")
     except:
