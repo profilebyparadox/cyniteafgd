@@ -580,7 +580,7 @@ async def send_msg(bot, message):
 def is_bot_owner(user_id):
     return str(user_id) in ADMINS
 
-@Client.on_message(filters.command("shortner"))
+@Client.on_message(filters.command("shortner") & filters.user(ADMINS))
 async def shortlink(bot, message):
     chat_type = message.chat.type
     if chat_type == enums.ChatType.PRIVATE:
@@ -593,13 +593,13 @@ async def shortlink(bot, message):
     data = message.text
     userid = message.from_user.id
     user = await bot.get_chat_member(grpid, userid)
-    if not is_bot_owner(userid):
-        return await message.reply_text("<b>Sorry, only the bot admins can use this command !</b>")
+    if user.status not in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER] and str(userid) not in ADMINS:
+        return await message.reply_text("<b>You don't have access to use this command !</b>")
     try:
         command, shortlink_url, api = data.split(" ")
     except:
-        return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortlink shorturllink.in 95a8195c40d31e0c3b6baa68813fcecb1239f2e9</code></b>")
-    reply = await message.reply_text("<b>Please wait...</b>")
+        return await message.reply_text("<b>Command Incomplete :(\n\nGive me a shortlink and api along with the command !\n\nFormat: <code>/shortner Mdisklink.link Hbe792827uebwudi18373888bsnz2</Code></B>")
+    reply = await message.reply_text("<b>Please Wait...</b>")
     await save_group_settings(grpid, 'shortlink', shortlink_url)
     await save_group_settings(grpid, 'shortlink_api', api)
     await save_group_settings(grpid, 'is_shortlink', True)
